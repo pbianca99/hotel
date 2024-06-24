@@ -16,7 +16,7 @@ use App\Models\RoomBookedDate;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Intervention\Image\Facades\Image;
-
+use Stripe;
 
 class BookingController extends Controller
 {
@@ -98,6 +98,18 @@ class BookingController extends Controller
             $discount = ($room->discount/100)*$subtotal;
             $total_price = $subtotal-$discount;
             $code = rand(0000000000,9999999999);
+
+            if($request->payment_method == 'Stripe'){
+                Stripe\Stripe::setApiKey(env('STRIPE_KEY'));
+                $s_pay = Stripe\Charge::create([
+                    "amount" = $total_price * 100,
+                    "currency" = "ron",
+                    "source" => $request->stripeToken,
+                    "description" => "Plata pentru rezervarea nr. ".$code,
+
+                ]);
+
+            }
 
             $data = new Booking();
             $data->room_id = $room->id;
