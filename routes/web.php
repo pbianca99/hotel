@@ -89,7 +89,15 @@ Route::middleware(['auth','roles:admin'])->group(function(){
         Route::get('/delete/roomno/{id}', 'DeleteRoomNumber')->name('delete.roomno');
     });
 
-});
+
+    Route::controller(BookingController::class)->group(function(){
+        Route::get('/booking/list', 'BookingList')->name('booking.list');
+        Route::get('/edit_booking/{id}', 'EditBooking')->name('edit_booking');
+        Route::get('/download/invoice/{id}', 'DownloadInvoice')->name('download.invoice');
+    });
+
+
+}); //end Admin group middleware
 
 Route::controller(FrontendRoomController::class)->group(function(){
     Route::get('/rooms/','AllFrontendRoomList')->name('froom.all');
@@ -106,7 +114,20 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/checkout/','Checkout')->name('checkout');
         Route::post('/booking/store/','BookingStore')->name('user_booking_store');
         Route::post('/checkout/store/','CheckoutStore')->name('checkout.store');
-        Route::match(['get', 'post'],'/stripe_pay', [BookingController::class, 'stripe_pay'])->name('stripe_pay');
+       // Route::match(['get', 'post'],'/stripe_pay', [BookingController::class, 'stripe_pay'])->name('stripe_pay');
+       Route::post('/update/booking/status/{id}', 'UpdateBookingStatus')->name('update.booking.status');
+       Route::post('/update/booking/{id}', 'UpdateBooking')->name('update.booking');
+   
+       // Assign Room Route 
+       Route::get('/assign_room/{id}', 'AssignRoom')->name('assign_room');
+       Route::get('/assign_room/store/{booking_id}/{room_number_id}', 'AssignRoomStore')->name('assign_room_store');
+       Route::get('/assign_room_delete/{id}', 'AssignRoomDelete')->name('assign_room_delete');
+   
+       ////////// User Booking Route
+   
+       Route::get('/user/booking', 'UserBooking')->name('user.booking');
+       Route::get('/user/invoice/{id}', 'UserInvoice')->name('user.invoice');
+   
 
     });
 });
